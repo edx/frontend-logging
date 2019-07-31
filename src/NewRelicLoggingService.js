@@ -74,6 +74,7 @@ class NewRelicLoggingService {
       };
       updatedCustomAttributes = Object.assign({}, requestAttributes, customAttributes);
 
+      // These are typically client-side errors, like "Network Error", that we can't do anything about.
       this.logInfo(
         `API request failed: ${request.status} ${requestMethod} ${requestUrl} ${errorMessage}`,
         updatedCustomAttributes,
