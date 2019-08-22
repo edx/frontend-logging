@@ -2,7 +2,8 @@ import NewRelicLoggingService from './NewRelicLoggingService';
 
 import {
   configureLoggingService,
-  logAPIErrorResponse,
+  logAxiosError,
+  processAxiosError,
   logInfo,
   logError,
   resetLoggingService,
@@ -21,7 +22,7 @@ describe('configureLoggingService', () => {
 
   it('fails when loggingService has invalid API', () => {
     expect(() => configureLoggingService({}))
-      .toThrowError(new Error('The loggingService API must have a logAPIErrorResponse function.'));
+      .toThrowError(new Error('The loggingService API must have a logAxiosError function.'));
   });
 });
 
@@ -51,13 +52,23 @@ describe('configured logging service', () => {
     });
   });
 
-  describe('logAPIErrorResponse', () => {
+  describe('logAxiosError', () => {
     it('passes call through to NewRelicLoggingService', () => {
       const mockStatic = jest.fn();
-      NewRelicLoggingService.logAPIErrorResponse = mockStatic.bind(NewRelicLoggingService);
+      NewRelicLoggingService.logAxiosError = mockStatic.bind(NewRelicLoggingService);
 
-      logAPIErrorResponse(arg1, arg2);
+      logAxiosError(arg1, arg2);
       expect(mockStatic).toHaveBeenCalledWith(arg1, arg2);
+    });
+  });
+
+  describe('processAxiosError', () => {
+    it('passes call through to NewRelicLoggingService', () => {
+      const mockStatic = jest.fn();
+      NewRelicLoggingService.processAxiosError = mockStatic.bind(NewRelicLoggingService);
+
+      processAxiosError(arg1);
+      expect(mockStatic).toHaveBeenCalledWith(arg1);
     });
   });
 });
@@ -81,9 +92,9 @@ describe('test failures when logging service is not configured', () => {
     });
   });
 
-  describe('logAPIErrorResponse', () => {
+  describe('logAxiosError', () => {
     it('throws an error', () => {
-      expect(() => logAPIErrorResponse(arg1, arg2))
+      expect(() => logAxiosError(arg1, arg2))
         .toThrowError(new Error('You must first configure the loggingService.'));
     });
   });

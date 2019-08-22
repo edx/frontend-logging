@@ -1,14 +1,16 @@
 import NewRelicLoggingService from './NewRelicLoggingService';
 import {
   configureLoggingService,
-  logAPIErrorResponse,
+  logAxiosError,
+  processAxiosError,
   logInfo,
   logError,
 } from './logging';
 
 export {
   configureLoggingService,
-  logAPIErrorResponse,
+  logAxiosError,
+  processAxiosError,
   logInfo,
   logError,
   NewRelicLoggingService,
