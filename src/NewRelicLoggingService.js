@@ -40,7 +40,7 @@ class NewRelicLoggingService {
     }
   }
 
-  static processAxiosError(error = {}) {
+  static processApiClientError(error = {}) {
     const { request, response } = error;
 
     if (response) {
@@ -82,8 +82,8 @@ class NewRelicLoggingService {
 
   // API errors look for axios API error format.
   // Note: function will simply log errors that don't seem to be API error responses.
-  static logAxiosError(error = {}, _customAttributes = {}) {
-    const processedError = this.processAxiosError(error);
+  static logApiClientError(error = {}, _customAttributes = {}) {
+    const processedError = this.processApiClientError(error);
     const { messagePrefix, ...customAttributes } = _customAttributes;
     const {
       errorType,

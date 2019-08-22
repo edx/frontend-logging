@@ -54,16 +54,16 @@ describe('logError', () => {
   });
 });
 
-describe('processAxiosError', () => {
+describe('processApiClientError', () => {
   it('will process an empty object', () => {
-    expect(NewRelicLoggingService.processAxiosError())
+    expect(NewRelicLoggingService.processApiClientError())
       .toEqual({
         errorType: 'api-request-config-error',
         errorData: '',
       });
   });
   it('will process a poorly formed axios response object', () => {
-    expect(NewRelicLoggingService.processAxiosError({
+    expect(NewRelicLoggingService.processApiClientError({
       request: {},
       response: {},
       config: {},
@@ -75,7 +75,7 @@ describe('processAxiosError', () => {
     });
   });
   it('will process a poorly formed axios request object', () => {
-    expect(NewRelicLoggingService.processAxiosError({
+    expect(NewRelicLoggingService.processApiClientError({
       request: {},
       config: {},
     })).toEqual({
@@ -87,7 +87,7 @@ describe('processAxiosError', () => {
     });
   });
   it('will process an axios request object', () => {
-    expect(NewRelicLoggingService.processAxiosError({
+    expect(NewRelicLoggingService.processApiClientError({
       request: {
         responseText: 'Hello',
         responseURL: 'http://edx.org',
@@ -106,7 +106,7 @@ describe('processAxiosError', () => {
     });
   });
   it('will process an axios response object', () => {
-    expect(NewRelicLoggingService.processAxiosError({
+    expect(NewRelicLoggingService.processApiClientError({
       response: {
         data: 'Hello',
         status: 400,
@@ -123,7 +123,7 @@ describe('processAxiosError', () => {
     });
   });
   it('will process an axios response object with HTML data in it', () => {
-    expect(NewRelicLoggingService.processAxiosError({
+    expect(NewRelicLoggingService.processApiClientError({
       response: {
         data: '<!DOCTYPE html><html>Hi</html>',
         status: 400,
@@ -141,7 +141,7 @@ describe('processAxiosError', () => {
   });
 });
 
-describe('logAxiosError', () => {
+describe('logApiClientError', () => {
   beforeEach(() => {
     global.newrelic.noticeError.mockReset();
     global.newrelic.addPageAction.mockReset();
@@ -167,7 +167,7 @@ describe('logAxiosError', () => {
       errorUrl: error.request.responseURL,
       errorData: error.request.responseText,
     };
-    NewRelicLoggingService.logAxiosError(error);
+    NewRelicLoggingService.logApiClientError(error);
     expect(global.newrelic.addPageAction).toHaveBeenCalledWith('INFO', expectedAttributes);
   });
 
@@ -192,7 +192,7 @@ describe('logAxiosError', () => {
       errorData: JSON.stringify(error.response.data),
       test: 'custom',
     };
-    NewRelicLoggingService.logAxiosError(error, { test: 'custom' });
+    NewRelicLoggingService.logApiClientError(error, { test: 'custom' });
     expect(global.newrelic.noticeError).toHaveBeenCalledWith(expectedError, expectedAttributes);
   });
 
@@ -211,7 +211,7 @@ describe('logAxiosError', () => {
       errorUrl: '',
       errorData: '<Response is HTML>',
     };
-    NewRelicLoggingService.logAxiosError(error);
+    NewRelicLoggingService.logApiClientError(error);
     expect(global.newrelic.noticeError).toHaveBeenCalledWith(expectedError, expectedAttributes);
   });
 });
