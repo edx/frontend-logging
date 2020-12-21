@@ -1,5 +1,5 @@
 ⛔️ DEPRECATION WARNING 
-======================
+=======================
 
 **This library is deprecated and will be archived.** 
 
@@ -52,8 +52,8 @@ When using ``logInfo``, these only appear in New Relic Insights when querying fo
 You can also add your own custom metrics as an additional argument, or see the code to find other standard custom attributes.
 
 
-.. |Build Status| image:: https://api.travis-ci.org/edx/frontend-logging.svg?branch=master
-   :target: https://travis-ci.org/edx/frontend-logging
+.. |Build Status| image:: https://api.travis-ci.com/edx/frontend-logging.svg?branch=master
+   :target: https://travis-ci.com/edx/frontend-logging
 .. |Coveralls| image:: https://img.shields.io/coveralls/edx/frontend-logging.svg?branch=master
    :target: https://coveralls.io/github/edx/frontend-logging
 .. |npm_version| image:: https://img.shields.io/npm/v/@edx/frontend-logging.svg
