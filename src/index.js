@@ -1,2 +1,2 @@
-// eslint-disable-next-line no-restricted-exports
-export { default } from './DatadogLoggingService';
+// eslint-disable-next-line import/prefer-default-export
+export { default as DatadogLoggingService } from './DatadogLoggingService';

@@ -7,7 +7,7 @@ Status](https://api.travis-ci.com/edx/frontend-logging.svg?branch=master)](https
 
 ## Purpose
 
-frontend-logging contains a shared interface for logging errors and event to Datadog.
+frontend-logging contains a shared interface for logging errors and events to Datadog.
 
 ## Usage
 
@@ -19,7 +19,7 @@ To install frontend-logging into your project::
 
 In the `env.config.js` file, add the following
 
-    import DatadogLoggingService from '@edx/frontend-logging';
+    import { DatadogLoggingService } from '@edx/frontend-logging';
 
     const config = {
       loggingService: DatadogLoggingService,
@@ -31,6 +31,8 @@ In the `env.config.js` file, add the following
 
 The DatadogLoggingService is a concrete implementation of the logging service interface that sends messages to Datadog that can be seen in Datadog RUM and Datadog browser logs. When in development mode, all messages will instead be sent to the console.
 
-When you use ``logError``, your errors will appear under broswe logs for your Browser application.
+When you use ``logError``, your errors will appear under broswer logs for your Browser application.
 
 You can also add your own custom metrics as an additional argument, or see the code to find other standard custom attributes.
+
+General Logging service interface is defined in [frontend-platform](https://openedx.github.io/frontend-platform/module-Logging.LoggingService.html).

@@ -1,13 +1,14 @@
 {
   "name": "@edx/frontend-logging",
   "version": "1.0.0-semantically-released",
-  "description": "Edx Frontend logging client code for sending logging and events to Datadog",
+  "description": "edX Frontend logging client code for sending logging and events to Datadog",
   "main": "dist/index.js",
+  "sideEffects": false,
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "build": "./node_modules/.bin/fedx-scripts babel src --out-dir dist --source-maps --copy-files",
+    "build": "make build",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
     "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests"
   },
@@ -23,7 +24,9 @@
   "homepage": "https://github.com/edx/frontend-logging#readme",
   "dependencies": {
     "@datadog/browser-logs": "^5.17.1",
-    "@datadog/browser-rum": "^5.17.1",
+    "@datadog/browser-rum": "^5.17.1"
+  },
+  "devDependencies": {
     "@openedx/frontend-build": "^14.0.3"
   }
 }
