@@ -1,4 +1,4 @@
-# frontend-build
+# frontend-logging
 
 [![Build
 Status](https://api.travis-ci.com/edx/frontend-logging.svg?branch=master)](https://travis-ci.com/edx/frontend-logging)
