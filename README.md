@@ -27,7 +27,7 @@ In the `env.config.js` file, add the following
     
     export default config;
 
-## NewRelicLoggingService
+## DatadogLoggingService
 
 The DatadogLoggingService is a concrete implementation of the logging service interface that sends messages to Datadog that can be seen in Datadog RUM and Datadog browser logs. When in development mode, all messages will instead be sent to the console.
 
