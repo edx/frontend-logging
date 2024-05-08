@@ -7,7 +7,7 @@ function sendBrowserLog(actionName, message, customAttributes) {
   if (process.env.NODE_ENV === 'development') {
     console.log(actionName, message, customAttributes); // eslint-disable-line
   }
-  datadogLogs.logger.log(message, customAttributes);
+  datadogLogs.logger.info(`${actionName}: ${message}`, customAttributes);
 }
 
 function sendError(error, customAttributes) {
