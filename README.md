@@ -1,9 +1,9 @@
 # frontend-build
 
 [![Build
-Status](https://api.travis-ci.com/edx/frontend-build.svg?branch=master)](https://travis-ci.com/edx/frontend-build)
-[![Codecov](https://img.shields.io/codecov/c/github/edx/frontend-build)](https://codecov.io/gh/edx/frontend-build)
-[![license](https://img.shields.io/npm/l/@openedx/frontend-build.svg)](https://github.com/edx-unsupported/frontend-base/blob/master/LICENSE)
+Status](https://api.travis-ci.com/edx/frontend-logging.svg?branch=master)](https://travis-ci.com/edx/frontend-logging)
+[![Codecov](https://img.shields.io/codecov/c/github/edx/frontend-logging)](https://codecov.io/gh/edx/frontend-logging)
+[![license](https://img.shields.io/npm/l/@edx/frontend-logging.svg)](@edx/frontend-logging)
 
 ## Purpose
 
@@ -19,7 +19,7 @@ To install frontend-logging into your project::
 
 In the `env.config.js` file, add the following
 
-    import { DatadogLoggingService } from '@edx/frontend-logging';
+    import DatadogLoggingService from '@edx/frontend-logging';
 
     const config = {
       loggingService: DatadogLoggingService,
