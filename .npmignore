@@ -6,7 +6,9 @@ coverage
 jest.config.js
 Makefile
 renovate.json
+.eslintignore
+.eslintrc.js
+.nvmrc
 src/**/*.test.js
-src/**/*.test.jsx
 src/**/tests
 src/**/setupTest.js
