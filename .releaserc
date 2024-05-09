@@ -5,6 +5,9 @@
     {
       "path": "@semantic-release/npm",
       "pkgRoot": "dist"
+    },
+    {
+      "path": "@semantic-release/github"
     }
   ],
   "analyzeCommits": "@semantic-release/commit-analyzer",
@@ -19,6 +22,12 @@
     {
       "path": "@semantic-release/npm",
       "pkgRoot": "dist"
+    },
+    {
+      "path": "@semantic-release/github",
+      "assets": {
+        "path": "dist/*"
+      }
     }
   ],
   "success": [],
