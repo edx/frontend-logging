@@ -2,7 +2,7 @@
   "name": "@edx/frontend-logging",
   "version": "1.0.0-semantically-released",
   "description": "edX Frontend logging client code for sending logging and events to Datadog",
-  "main": "index.js",
+  "main": "dist/index.js",
   "sideEffects": false,
   "publishConfig": {
     "access": "public"
