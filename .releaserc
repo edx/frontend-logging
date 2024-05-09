@@ -2,34 +2,23 @@
   "branch": "master",
   "tagFormat": "v${version}",
   "verifyConditions": [
-    {
-      "path": "@semantic-release/npm",
-      "pkgRoot": "dist"
-    },
+    "@semantic-release/npm",
     {
       "path": "@semantic-release/github",
       "assets": {
-        "path": "dist"
+        "path": "dist/*"
       }
     }
   ],
   "analyzeCommits": "@semantic-release/commit-analyzer",
   "generateNotes": "@semantic-release/release-notes-generator",
-  "prepare": [
-    {
-      "path": "@semantic-release/npm",
-      "pkgRoot": "dist"
-    }
-  ],
+  "prepare": "@semantic-release/npm",
   "publish": [
-    {
-      "path": "@semantic-release/npm",
-      "pkgRoot": "dist"
-    },
+    "@semantic-release/npm",
     {
       "path": "@semantic-release/github",
       "assets": {
-        "path": "dist"
+        "path": "dist/*"
       }
     }
   ],
