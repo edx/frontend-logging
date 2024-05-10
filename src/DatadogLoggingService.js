@@ -43,6 +43,7 @@ class DatadogLoggingService {
     datadogLogs.init({
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE,
+      env: process.env.DATADOG_ENV,
       forwardErrorsToLogs: true,
       sessionSampleRate: 100,
       service: process.env.DATADOG_SERVICE,
