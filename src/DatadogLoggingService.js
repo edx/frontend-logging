@@ -1,5 +1,6 @@
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
+import { NewRelicLoggingService } from '@edx/frontend-platform/logging';
 
 const browserLogNameIgnoredError = 'IGNORED_ERROR';
 
@@ -18,8 +19,9 @@ function sendError(error, customAttributes) {
   datadogLogs.logger.error(error, customAttributes);
 }
 
-class DatadogLoggingService {
+class DatadogLoggingService extends NewRelicLoggingService {
   constructor(options) {
+    super(options);
     const config = options ? options.config : undefined;
     this.ignoredErrorRegexes = config ? config.IGNORED_ERROR_REGEX : undefined;
     this.initialize();
@@ -50,6 +52,7 @@ class DatadogLoggingService {
   }
 
   logInfo(infoStringOrErrorObject, customAttributes = {}) {
+    super.logInfo(infoStringOrErrorObject, customAttributes);
     let message = infoStringOrErrorObject;
     let customAttrs = { ...customAttributes };
     if (typeof infoStringOrErrorObject === 'object' && 'message' in infoStringOrErrorObject) {
@@ -68,6 +71,7 @@ class DatadogLoggingService {
    * @memberof DatadogLoggingService
    */
   logError(errorStringOrObject, customAttributes = {}) {
+    super.logError(errorStringOrObject, customAttributes);
     const errorCustomAttributes = errorStringOrObject.customAttributes || {};
     let allCustomAttributes = { ...errorCustomAttributes, ...customAttributes };
     if (Object.keys(allCustomAttributes).length === 0) {
@@ -96,6 +100,7 @@ class DatadogLoggingService {
    * @param {string|number|null} value
    */
   setCustomAttribute(name, value) {
+    super.setCustomAttribute(name, value);
     if (name === 'userId') {
       datadogLogs.setUserProperty('id', value);
       datadogRum.setUserProperty('id', value);

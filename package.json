@@ -24,7 +24,8 @@
   "homepage": "https://github.com/edx/frontend-logging#readme",
   "dependencies": {
     "@datadog/browser-logs": "^5.17.1",
-    "@datadog/browser-rum": "^5.17.1"
+    "@datadog/browser-rum": "^5.17.1",
+    "@edx/frontend-platform": "^8.0.2"
   },
   "devDependencies": {
     "@openedx/frontend-build": "^14.0.3"
