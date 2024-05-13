@@ -35,8 +35,8 @@ class DatadogLoggingService extends NewRelicLoggingService {
       service: process.env.DATADOG_SERVICE,
       env: process.env.DATADOG_ENV,
       version: process.env.DATADOG_VERSION,
-      sessionSampleRate: parseInt(process.env.SESSION_SAMPLE_RATE || 0, 10),
-      sessionReplaySampleRate: parseInt(process.env.SESSION_REPLAY_SAMPLE_RATE || 0, 10),
+      sessionSampleRate: parseInt(process.env.DATADOG_SESSION_SAMPLE_RATE || 0, 10),
+      sessionReplaySampleRate: parseInt(process.env.DATADOG_SESSION_REPLAY_SAMPLE_RATE || 0, 10),
       trackUserInteractions: true,
       trackResources: true,
       trackLongTasks: true,
@@ -47,7 +47,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       site: process.env.DATADOG_SITE,
       env: process.env.DATADOG_ENV,
       forwardErrorsToLogs: true,
-      sessionSampleRate: parseInt(process.env.SESSION_SAMPLE_RATE || 0, 10),
+      sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
       service: process.env.DATADOG_SERVICE,
     });
   }
