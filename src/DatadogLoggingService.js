@@ -28,7 +28,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
   }
 
   async initialize() {
-    let datadogVersion = process.env.DATADOG_VERSION;
+    let datadogVersion = process.env.DATADOG_VERSION || '1.0.0';
     try {
       const response = await fetch('version.json');
       if (response.ok) {
@@ -41,11 +41,11 @@ class DatadogLoggingService extends NewRelicLoggingService {
       console.error('Version File Not Found');
     }
     datadogRum.init({
-      applicationId: process.env.DATADOG_APPLICATION_ID,
-      clientToken: process.env.DATADOG_CLIENT_TOKEN,
-      site: process.env.DATADOG_SITE,
-      service: process.env.DATADOG_SERVICE,
-      env: process.env.DATADOG_ENV,
+      applicationId: process.env.DATADOG_APPLICATION_ID || '',
+      clientToken: process.env.DATADOG_CLIENT_TOKEN || '',
+      site: process.env.DATADOG_SITE || '',
+      service: process.env.DATADOG_SERVICE || '',
+      env: process.env.DATADOG_ENV || '',
       version: datadogVersion,
       sessionSampleRate: parseInt(process.env.DATADOG_SESSION_SAMPLE_RATE || 0, 10),
       sessionReplaySampleRate: parseInt(process.env.DATADOG_SESSION_REPLAY_SAMPLE_RATE || 0, 10),
@@ -55,12 +55,13 @@ class DatadogLoggingService extends NewRelicLoggingService {
       defaultPrivacyLevel: 'mask-user-input',
     });
     datadogLogs.init({
-      clientToken: process.env.DATADOG_CLIENT_TOKEN,
-      site: process.env.DATADOG_SITE,
-      env: process.env.DATADOG_ENV,
+      clientToken: process.env.DATADOG_CLIENT_TOKEN || '',
+      site: process.env.DATADOG_SITE || '',
+      env: process.env.DATADOG_ENV || '',
       forwardErrorsToLogs: true,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
-      service: process.env.DATADOG_SERVICE,
+      service: process.env.DATADOG_SERVICE || '',
+      version: datadogVersion,
     });
   }
 
