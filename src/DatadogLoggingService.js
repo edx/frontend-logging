@@ -27,14 +27,26 @@ class DatadogLoggingService extends NewRelicLoggingService {
     this.initialize();
   }
 
-  initialize() {
+  async initialize() {
+    let datadogVersion = process.env.DATADOG_VERSION;
+    try {
+      const response = await fetch('version.json');
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.commit) {
+          datadogVersion = data.commit;
+        }
+      }
+    } catch (error) {
+      console.error('Version File Not Found');
+    }
     datadogRum.init({
       applicationId: process.env.DATADOG_APPLICATION_ID,
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE,
       service: process.env.DATADOG_SERVICE,
       env: process.env.DATADOG_ENV,
-      version: process.env.DATADOG_VERSION,
+      version: datadogVersion,
       sessionSampleRate: parseInt(process.env.DATADOG_SESSION_SAMPLE_RATE || 0, 10),
       sessionReplaySampleRate: parseInt(process.env.DATADOG_SESSION_REPLAY_SAMPLE_RATE || 0, 10),
       trackUserInteractions: true,
