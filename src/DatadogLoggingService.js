@@ -28,13 +28,25 @@ class DatadogLoggingService extends NewRelicLoggingService {
   }
 
   initialize() {
+    const requiredDatadogConfig = [
+      process.env.DATADOG_APPLICATION_ID,
+      process.env.DATADOG_CLIENT_TOKEN,
+    ];
+    const hasRequiredDatadogConfig = requiredDatadogConfig.every(value => !!value);
+
+    // Do not attempt to initialize Datadog if required config settings are not supplied.
+    if (!hasRequiredDatadogConfig) {
+      return;
+    }
+
+    const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
     datadogRum.init({
       applicationId: process.env.DATADOG_APPLICATION_ID,
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
-      site: process.env.DATADOG_SITE,
-      service: process.env.DATADOG_SERVICE,
-      env: process.env.DATADOG_ENV,
-      version: process.env.DATADOG_VERSION,
+      site: process.env.DATADOG_SITE || '',
+      service: process.env.DATADOG_SERVICE || '',
+      env: process.env.DATADOG_ENV || '',
+      version: datadogVersion,
       sessionSampleRate: parseInt(process.env.DATADOG_SESSION_SAMPLE_RATE || 0, 10),
       sessionReplaySampleRate: parseInt(process.env.DATADOG_SESSION_REPLAY_SAMPLE_RATE || 0, 10),
       trackUserInteractions: true,
@@ -44,11 +56,12 @@ class DatadogLoggingService extends NewRelicLoggingService {
     });
     datadogLogs.init({
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
-      site: process.env.DATADOG_SITE,
-      env: process.env.DATADOG_ENV,
+      site: process.env.DATADOG_SITE || '',
+      env: process.env.DATADOG_ENV || '',
       forwardErrorsToLogs: true,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
-      service: process.env.DATADOG_SERVICE,
+      service: process.env.DATADOG_SERVICE || '',
+      version: datadogVersion,
     });
   }
 
