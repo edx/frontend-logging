@@ -28,6 +28,17 @@ class DatadogLoggingService extends NewRelicLoggingService {
   }
 
   initialize() {
+    const requiredDatadogConfig = [
+      process.env.DATADOG_APPLICATION_ID,
+      process.env.DATADOG_CLIENT_TOKEN,
+    ];
+    const hasRequiredDatadogConfig = requiredDatadogConfig.every(value => !!value);
+
+    // Do not attempt to initialize Datadog if required config settings are not supplied.
+    if (!hasRequiredDatadogConfig) {
+      return;
+    }
+
     const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
     datadogRum.init({
       applicationId: process.env.DATADOG_APPLICATION_ID || '',
