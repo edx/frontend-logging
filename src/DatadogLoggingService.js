@@ -41,8 +41,8 @@ class DatadogLoggingService extends NewRelicLoggingService {
 
     const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
     datadogRum.init({
-      applicationId: process.env.DATADOG_APPLICATION_ID || '',
-      clientToken: process.env.DATADOG_CLIENT_TOKEN || '',
+      applicationId: process.env.DATADOG_APPLICATION_ID,
+      clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE || '',
       service: process.env.DATADOG_SERVICE || '',
       env: process.env.DATADOG_ENV || '',
@@ -55,7 +55,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       defaultPrivacyLevel: 'mask-user-input',
     });
     datadogLogs.init({
-      clientToken: process.env.DATADOG_CLIENT_TOKEN || '',
+      clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE || '',
       env: process.env.DATADOG_ENV || '',
       forwardErrorsToLogs: true,
