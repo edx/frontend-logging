@@ -39,7 +39,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       return;
     }
 
-    const datadogVersion = process.env.APP_VERSION || process.env.DATADOG_VERSION || '1.0.0';
+    const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
     datadogRum.init({
       applicationId: process.env.DATADOG_APPLICATION_ID,
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
