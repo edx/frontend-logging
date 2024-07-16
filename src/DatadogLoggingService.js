@@ -27,6 +27,13 @@ class DatadogLoggingService extends NewRelicLoggingService {
     this.initialize();
   }
 
+  // to read more about the use cases for beforeSend
+  // https://docs.datadoghq.com/real_user_monitoring/guide/enrich-and-control-rum-data/?tab=event#event-and-context-structure
+  beforeSend() {
+    // common/shared logic across all MFEs
+    return true;
+  }
+
   initialize() {
     const requiredDatadogConfig = [
       process.env.DATADOG_APPLICATION_ID,
@@ -42,6 +49,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
     const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
     datadogRum.init({
       applicationId: process.env.DATADOG_APPLICATION_ID,
+      beforeSend: this.beforeSend,
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE || '',
       service: process.env.DATADOG_SERVICE || '',
