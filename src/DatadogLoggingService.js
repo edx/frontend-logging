@@ -27,8 +27,10 @@ class DatadogLoggingService extends NewRelicLoggingService {
     this.initialize();
   }
 
-  // to read more about the use cases for beforeSend
+  // to read more about the use cases for beforeSend, refer to the documentation:
   // https://docs.datadoghq.com/real_user_monitoring/guide/enrich-and-control-rum-data/?tab=event#event-and-context-structure
+  // (e.g., discarding frontend errors matching the optional `IGNORED_ERROR_REGEX` configuration,
+  // currently implemented in `logError` below).
   beforeSend() {
     // common/shared logic across all MFEs
     return true;
