@@ -2,6 +2,8 @@ import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 import { NewRelicLoggingService } from '@edx/frontend-platform/logging';
 
+console.log(NewRelicLoggingService, "---NewRelicLoggingService")
+
 const browserLogNameIgnoredError = 'IGNORED_ERROR';
 
 function sendBrowserLog(actionName, message, customAttributes) {
