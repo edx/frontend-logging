@@ -62,7 +62,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       trackUserInteractions: true,
       trackResources: true,
       trackLongTasks: true,
-      defaultPrivacyLevel: 'mask-user-input',
+      defaultPrivacyLevel: process.env.DATADOG_PRIVACY_LEVEL || 'mask-user-input',
     });
     datadogLogs.init({
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
