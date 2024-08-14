@@ -15,10 +15,6 @@ You can also add your own custom metrics as an additional argument, or see the c
 
 General Logging service interface is defined in [frontend-platform](https://openedx.github.io/frontend-platform/module-Logging.LoggingService.html).
 
-## Deployment
-
-When you make changes, [draft a new release](https://github.com/edx/frontend-logging/releases) (and, if necessary, change the imported version number in importing packages).
-
 ## Usage
 
 To install frontend-logging into your project::

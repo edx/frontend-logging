@@ -49,33 +49,30 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
 
     const datadogVersion = process.env.DATADOG_VERSION || process.env.APP_VERSION || '1.0.0';
-    datadogRum.init({
-      applicationId: process.env.DATADOG_APPLICATION_ID,
-      beforeSend: this.beforeSend,
+    const commonInitOptions = {
       clientToken: process.env.DATADOG_CLIENT_TOKEN,
       site: process.env.DATADOG_SITE || '',
-      service: process.env.DATADOG_SERVICE || '',
       env: process.env.DATADOG_ENV || '',
+      service: process.env.DATADOG_SERVICE || '',
       version: datadogVersion,
+      trackSessionAcrossSubdomains: true,
+      usePartitionedCrossSiteSessionCookie: true,
+    };
+    datadogRum.init({
+      ...commonInitOptions,
+      applicationId: process.env.DATADOG_APPLICATION_ID,
+      beforeSend: this.beforeSend,
       sessionSampleRate: parseInt(process.env.DATADOG_SESSION_SAMPLE_RATE || 0, 10),
       sessionReplaySampleRate: parseInt(process.env.DATADOG_SESSION_REPLAY_SAMPLE_RATE || 0, 10),
       trackUserInteractions: true,
-      trackSessionAcrossSubdomains: true,
-      usePartitionedCrossSiteSessionCookie: true,
       trackResources: true,
       trackLongTasks: true,
       defaultPrivacyLevel: process.env.DATADOG_PRIVACY_LEVEL || 'mask-user-input',
     });
     datadogLogs.init({
-      clientToken: process.env.DATADOG_CLIENT_TOKEN,
-      site: process.env.DATADOG_SITE || '',
-      env: process.env.DATADOG_ENV || '',
+      ...commonInitOptions,
       forwardErrorsToLogs: true,
-      trackSessionAcrossSubdomains: true,
-      usePartitionedCrossSiteSessionCookie: true,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
-      service: process.env.DATADOG_SERVICE || '',
-      version: datadogVersion,
     });
   }
 
