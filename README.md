@@ -43,8 +43,9 @@ There are a number of variables you can set to configure RUM logging in Datadog.
 - `DATADOG_CLIENT_TOKEN`: Provided by Datadog during RUM configuration.
 - `DATADOG_SITE`: Provided by Datadog during RUM configuration. Probably `datadoghq.com`.
 - `DATADOG_SERVICE`: Provided by Datadog during RUM configuration. This will be the name of your frontend.
-- `DATADOG_ENV`: Environment for the config. (ie. `stg`, `prod`, `edge`)
-- `DATADOG_SESSION_SAMPLE_RATE`: How many sessions should we capture RUM data from. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
-- `DATADOG_SESSION_REPLAY_SAMPLE_RATE`: How many sessions should we capture for replay. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
-- `DATADOG_LOGS_SESSION_SAMPLE_RATE`: How many sessions should we capture logs from. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
-- `DATADOG_PRIVACY_LEVEL`: (**Optional**) The privacy masking setting used for saved sessions. Defaults to masking only user input. [For legal values, see Datadog's session privacy docs](https://docs.datadoghq.com/real_user_monitoring/session_replay/privacy_options).
+- `DATADOG_ENV`: Environment for the config. (i.e., `stg`, `prod`, `edge`)
+- `DATADOG_SESSION_SAMPLE_RATE`: (**Optional**) How many sessions should we capture RUM data from. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
+- `DATADOG_SESSION_REPLAY_SAMPLE_RATE`: (**Optional**) How many sessions should we capture for replay. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
+- `DATADOG_LOGS_SESSION_SAMPLE_RATE`: (**Optional**) How many sessions should we capture logs from. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
+- `DATADOG_PRIVACY_LEVEL`: (**Optional**) The privacy masking setting used for session replays. Defaults to masking all content. [For legal values, see Datadog's session privacy docs](https://docs.datadoghq.com/real_user_monitoring/session_replay/privacy_options).
+- `DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME`: (**Optional**) Whether all action names should be masked with a placeholder value; used in conjunction with `DATADOG_PRIVACY_LEVEL`.
