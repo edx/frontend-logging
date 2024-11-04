@@ -10,7 +10,8 @@
   "scripts": {
     "build": "make build",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
-    "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests"
+    "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
@@ -27,7 +28,7 @@
     "@datadog/browser-rum": "^5.17.1"
   },
   "devDependencies": {
-    "@openedx/frontend-build": "^14.0.3"
+    "@openedx/frontend-build": "^14.1.5"
   },
   "peerDependencies": {
     "@edx/frontend-platform": "^5.0.0 ||^6.0.0 || ^7.0.0 || ^8.0.0"

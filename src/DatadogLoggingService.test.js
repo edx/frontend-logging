@@ -199,4 +199,19 @@ describe('DatadogLoggingService', () => {
       expect(datadogLogs.logger.error).toHaveBeenCalledWith(error, undefined);
     });
   });
+
+  describe('getAllowedTracingUrls', () => {
+    it('returns an empty array if default allowed tracing urls are not configured', () => {
+      expect(service.getAllowedTracingUrls()).toEqual([]);
+    });
+
+    it('returns default allowedTracingUrls if DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS env var is set', () => {
+      process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS = 'true';
+      const expectedAllowedTracingUrls = [
+        /https:\/\/.*\.edx\.org/, // Matches any subdomain of edx.org
+      ];
+      expect(service.getAllowedTracingUrls()).toEqual(expectedAllowedTracingUrls);
+      delete process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS;
+    });
+  });
 });

@@ -69,6 +69,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       trackLongTasks: true,
       defaultPrivacyLevel: process.env.DATADOG_PRIVACY_LEVEL || 'mask',
       enablePrivacyForActionName: process.env.DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME || true,
+      allowedTracingUrls: this.getAllowedTracingUrls(),
     });
     datadogLogs.init({
       ...commonInitOptions,
@@ -134,6 +135,27 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
     datadogLogs.setGlobalContextProperty(name, value);
     datadogRum.setGlobalContextProperty(name, value);
+  }
+
+  /**
+   * Retrieves Datadog RUM's `allowedTracingUrls` initialization option.
+   *
+   * If the `DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS` environment variable is
+   * set, the default allowed tracing urls (i.e., any subdomain of edx.org) will
+   * be configured. Otherwise, an empty array will be returned to disable tracing urls.
+   *
+   * @returns {Array<string | RegExp>} An array representing allowed tracing urls.
+   */
+  getAllowedTracingUrls() {
+    if (process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS) {
+      // Return the default allowed tracing urls, if opted in.
+      return [
+        /https:\/\/.*\.edx\.org/, // Matches any subdomain of edx.org
+      ];
+    }
+
+    // Otherwise, return an empty array to disable tracing urls.
+    return [];
   }
 }
 
