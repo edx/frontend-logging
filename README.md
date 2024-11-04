@@ -49,3 +49,4 @@ There are a number of variables you can set to configure RUM logging in Datadog.
 - `DATADOG_LOGS_SESSION_SAMPLE_RATE`: (**Optional**) How many sessions should we capture logs from. This has cost implictions, so if you don't have unique needs, copy the most common setting you see in prior art.
 - `DATADOG_PRIVACY_LEVEL`: (**Optional**) The privacy masking setting used for session replays. Defaults to masking all content. [For legal values, see Datadog's session privacy docs](https://docs.datadoghq.com/real_user_monitoring/session_replay/privacy_options).
 - `DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME`: (**Optional**) Whether all action names should be masked with a placeholder value; used in conjunction with `DATADOG_PRIVACY_LEVEL`.
+- `DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS`: (**Optional**) Whether to configure Datadog RUM with default allowed tracing urls (i.e., any subdomain of edX.org).
