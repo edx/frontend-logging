@@ -71,6 +71,16 @@ class DatadogLoggingService extends NewRelicLoggingService {
       enablePrivacyForActionName: process.env.DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME || true,
       allowedTracingUrls: this.getAllowedTracingUrls(),
     });
+
+    try {
+      const featureFlagsToEvaluate = JSON.parse(process.env.FEATURE_FLAGS);
+      Object.entries(featureFlagsToEvaluate).forEach(([key, value]) => {
+        datadogRum.addFeatureFlagEvaluation(key, value);
+      });
+    } catch (error) {
+      sendError(`Failed to send feature flags data for evaluation due to this error: ${error}`, {})
+    }
+
     datadogLogs.init({
       ...commonInitOptions,
       forwardErrorsToLogs: true,
