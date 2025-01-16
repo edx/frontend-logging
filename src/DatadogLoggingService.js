@@ -78,7 +78,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
         datadogRum.addFeatureFlagEvaluation(key, value);
       });
     } catch (error) {
-      sendError(`Failed to send feature flags data for evaluation due to this error: ${error}`, {})
+      sendError(`Failed to send feature flags data for evaluation due to this error: ${error}`, {});
     }
 
     datadogLogs.init({
