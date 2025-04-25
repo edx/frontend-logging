@@ -1,10 +1,11 @@
 import { datadogLogs } from '@datadog/browser-logs';
+import { datadogRum } from '@datadog/browser-rum';
 
 import DatadogLoggingService from './DatadogLoggingService';
 
 jest.mock('@datadog/browser-rum', () => ({
   datadogRum: {
-    init: () => jest.fn(),
+    init: jest.fn(),
     setGlobalContextProperty: jest.fn(),
     setUserProperty: jest.fn(),
   },
@@ -200,18 +201,78 @@ describe('DatadogLoggingService', () => {
     });
   });
 
-  describe('getAllowedTracingUrls', () => {
-    it('returns an empty array if default allowed tracing urls are not configured', () => {
-      expect(service.getAllowedTracingUrls()).toEqual([]);
+  describe('allowedTracingUrls computed during initialization', () => {
+    beforeEach(() => {
+      datadogRum.init.mockReset();
     });
 
-    it('returns default allowedTracingUrls if DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS env var is set', () => {
+    it('does not configure connected RUM options if default allowed tracing urls are not configured', () => {
+      service = new DatadogLoggingService();
+      expect(datadogRum.init).toHaveBeenCalledTimes(1);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+      expect(rumOptions.allowedTracingUrls).toBeUndefined();
+      expect(rumOptions.traceSampleRate).toBeUndefined();
+      expect(rumOptions.traceContextInjection).toBeUndefined();
+    });
+
+    it.each([
+      {
+        expectedTraceSampleRate: 20,
+        expectedTraceContextInjection: 'sampled',
+      },
+      {
+        traceSampleRate: 50,
+        expectedTraceSampleRate: 50,
+        expectedTraceContextInjection: 'sampled',
+      },
+      {
+        traceContextInjection: 'all',
+        expectedTraceSampleRate: 20,
+        expectedTraceContextInjection: 'all',
+      },
+    ])('configures connected RUM options if DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS env var is set (%s)', ({
+      traceSampleRate,
+      expectedTraceSampleRate,
+      traceContextInjection,
+      expectedTraceContextInjection,
+    }) => {
       process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS = 'true';
+      if (traceSampleRate !== undefined) {
+        process.env.DATADOG_TRACE_SAMPLE_RATE = traceSampleRate.toString();
+      }
+      if (traceContextInjection !== undefined) {
+        process.env.DATADOG_TRACE_CONTEXT_INJECTION = traceContextInjection;
+      }
+      service = new DatadogLoggingService();
       const expectedAllowedTracingUrls = [
-        /https:\/\/.*\.edx\.org/, // Matches any subdomain of edx.org
+        /^https:\/\/([a-zA-Z0-9-]+\.)+edx\.org(\/|$)/, // Matches any subdomain of edx.org
       ];
-      expect(service.getAllowedTracingUrls()).toEqual(expectedAllowedTracingUrls);
+      expect(datadogRum.init).toHaveBeenCalledTimes(1);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+      expect(rumOptions.allowedTracingUrls).toEqual(expectedAllowedTracingUrls);
+      expect(rumOptions.traceSampleRate).toEqual(expectedTraceSampleRate);
+      expect(rumOptions.traceContextInjection).toEqual(expectedTraceContextInjection);
       delete process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS;
+      if (traceSampleRate !== undefined) {
+        delete process.env.DATADOG_TRACE_SAMPLE_RATE;
+      }
+      if (traceContextInjection !== undefined) {
+        delete process.env.DATADOG_TRACE_CONTEXT_INJECTION;
+      }
+    });
+
+    it('allows consumers to extend `getAllowedTracingUrls` method', () => {
+      class MockCustomDatadogLoggingService extends DatadogLoggingService {
+        getAllowedTracingUrls() {
+          return ['https://example.com'];
+        }
+      }
+      service = new MockCustomDatadogLoggingService();
+      expect(datadogRum.init).toHaveBeenCalledTimes(1);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+      expect(rumOptions.allowedTracingUrls).toEqual(['https://example.com']);
+      expect(rumOptions.traceSampleRate).toEqual(20);
+      expect(rumOptions.traceContextInjection).toEqual('sampled');
     });
   });
 });

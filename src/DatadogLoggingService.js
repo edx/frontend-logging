@@ -25,6 +25,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
     const config = options ? options.config : undefined;
     this.ignoredErrorRegexes = config ? config.IGNORED_ERROR_REGEX : undefined;
     this.initialize();
+    this.addRUMFeatureFlags();
   }
 
   // to read more about the use cases for beforeSend, refer to the documentation:
@@ -34,6 +35,38 @@ class DatadogLoggingService extends NewRelicLoggingService {
   beforeSend() {
     // common/shared logic across all MFEs
     return true;
+  }
+
+  getConnectedRUMTracesOptions() {
+    const allowedTracingUrls = [];
+    try {
+      allowedTracingUrls.push(...this.getAllowedTracingUrls());
+    } catch (error) {
+      sendError(error);
+    }
+    const connectedRumTracesOptions = {};
+    if (allowedTracingUrls.length > 0) {
+      Object.assign(connectedRumTracesOptions, {
+        allowedTracingUrls,
+        traceSampleRate: parseInt(process.env.DATADOG_TRACE_SAMPLE_RATE || 20, 10),
+        traceContextInjection: process.env.DATADOG_TRACE_CONTEXT_INJECTION || 'sampled',
+      });
+    }
+    return connectedRumTracesOptions;
+  }
+
+  addRUMFeatureFlags() {
+    if (!process.env.FEATURE_FLAGS) {
+      return;
+    }
+    try {
+      const featureFlagsToEvaluate = JSON.parse(process.env.FEATURE_FLAGS);
+      Object.entries(featureFlagsToEvaluate).forEach(([key, value]) => {
+        datadogRum.addFeatureFlagEvaluation(key, value);
+      });
+    } catch (error) {
+      sendError(`Failed to send feature flags data for evaluation due to this error: ${error}`, {});
+    }
   }
 
   initialize() {
@@ -59,21 +92,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
       usePartitionedCrossSiteSessionCookie: true,
     };
 
-    let allowedTracingUrls = [];
-    try {
-      allowedTracingUrls = this.getAllowedTracingUrls();
-    } catch (error) {
-      sendError(error);
-    }
-    const connectedRumTracesOptions = {};
-    if (allowedTracingUrls.length > 0) {
-      Object.assign(connectedRumTracesOptions, {
-        allowedTracingUrls,
-        traceSampleRate: parseInt(process.env.DATADOG_TRACE_SAMPLE_RATE || 20, 10),
-        traceContextInjection: process.env.DATADOG_TRACE_CONTEXT_INJECTION || 'sampled',
-      });
-    }
-
     datadogRum.init({
       ...commonInitOptions,
       applicationId: process.env.DATADOG_APPLICATION_ID,
@@ -85,17 +103,8 @@ class DatadogLoggingService extends NewRelicLoggingService {
       trackLongTasks: true,
       defaultPrivacyLevel: process.env.DATADOG_PRIVACY_LEVEL || 'mask',
       enablePrivacyForActionName: process.env.DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME || true,
-      ...connectedRumTracesOptions,
+      ...this.getConnectedRUMTracesOptions(),
     });
-
-    try {
-      const featureFlagsToEvaluate = JSON.parse(process.env.FEATURE_FLAGS);
-      Object.entries(featureFlagsToEvaluate).forEach(([key, value]) => {
-        datadogRum.addFeatureFlagEvaluation(key, value);
-      });
-    } catch (error) {
-      sendError(`Failed to send feature flags data for evaluation due to this error: ${error}`, {});
-    }
 
     datadogLogs.init({
       ...commonInitOptions,
@@ -132,9 +141,9 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
 
     /*
-        Separate the errors into ignored errors and other errors.
-        Ignored errors are logged as it is.
-        Other errors are logged via error API.
+      Separate the errors into ignored errors and other errors.
+      Ignored errors are logged as it is.
+      Other errors are logged via error API.
     */
     const errorMessage = errorStringOrObject.message || (typeof errorStringOrObject === 'string' ? errorStringOrObject : '');
     if (this.ignoredErrorRegexes && errorMessage.match(this.ignoredErrorRegexes)) {
