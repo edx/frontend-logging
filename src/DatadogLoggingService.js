@@ -58,6 +58,22 @@ class DatadogLoggingService extends NewRelicLoggingService {
       trackSessionAcrossSubdomains: true,
       usePartitionedCrossSiteSessionCookie: true,
     };
+
+    let allowedTracingUrls = [];
+    try {
+      allowedTracingUrls = this.getAllowedTracingUrls();
+    } catch (error) {
+      sendError(error);
+    }
+    const connectedRumTracesOptions = {};
+    if (allowedTracingUrls.length > 0) {
+      Object.assign(connectedRumTracesOptions, {
+        allowedTracingUrls,
+        traceSampleRate: parseInt(process.env.DATADOG_TRACE_SAMPLE_RATE || 20, 10),
+        traceContextInjection: process.env.DATADOG_TRACE_CONTEXT_INJECTION || 'sampled',
+      });
+    }
+
     datadogRum.init({
       ...commonInitOptions,
       applicationId: process.env.DATADOG_APPLICATION_ID,
@@ -69,7 +85,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       trackLongTasks: true,
       defaultPrivacyLevel: process.env.DATADOG_PRIVACY_LEVEL || 'mask',
       enablePrivacyForActionName: process.env.DATADOG_ENABLE_PRIVACY_FOR_ACTION_NAME || true,
-      allowedTracingUrls: this.getAllowedTracingUrls(),
+      ...connectedRumTracesOptions,
     });
 
     try {
@@ -160,7 +176,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
     if (process.env.DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS) {
       // Return the default allowed tracing urls, if opted in.
       return [
-        /https:\/\/.*\.edx\.org/, // Matches any subdomain of edx.org
+        /^https:\/\/([a-zA-Z0-9-]+\.)+edx\.org(\/|$)/, // Matches any subdomain of edx.org
       ];
     }
 
