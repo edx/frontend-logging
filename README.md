@@ -52,3 +52,13 @@ There are a number of variables you can set to configure RUM logging in Datadog.
 - `DATADOG_HAS_DEFAULT_ALLOWED_TRACING_URLS`: (**Optional**) Whether to configure Datadog RUM with default allowed tracing urls (i.e., *any* subdomain of edX.org). Note: assumes all services called by consuming frontend application allow the Datadog and trace request headers sent by the RUM SDK. For more granular control, it's recommended to extend the `getAllowedTracingUrls` class method to return a list of desired `allowedTracingUrls`.
 - `DATADOG_TRACE_SAMPLE_RATE`: (**Optional**) Percentage of backend traces to keep when using `allowedTracingUrls`. Defaults to 20% to mitigate APM quotas when at least one `allowedTracingUrls` is configured. If no `allowedTracingUrls` exist, falls back to Datadog defaults.
 - `DATADOG_TRACE_CONTEXT_INJECTION`: (**Optional**) Either `sampled` or `all`. Defaults `sampled` to prevent the browser SDK from injecting a sampling decision (instead making the decision on the server side based on the tracing library), when at least one `allowedTracingUrls` is configured. If no `allowedTracingUrls` exists, falls back to Datadog defaults.
+
+### Automatic Version Monitoring
+
+The DatadogLoggingService automatically captures and sends React and Node.js version information as global context attributes for all RUM and log events. This helps monitor the versions of these critical dependencies across all MFEs without requiring manual configuration.
+
+The following metadata is automatically included:
+- `react.version`: The version of React being used by the MFE
+- `node.version`: The version of Node.js used to build/run the application
+
+These attributes are available in Datadog for filtering, analysis, and creating dashboards to track version adoption across your microservices.
