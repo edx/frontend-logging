@@ -72,9 +72,9 @@ class DatadogLoggingService extends NewRelicLoggingService {
   addVersionMetadata() {
     try {
       // Add React version
-      let reactVersion = '--';
+      let reactVersion = 'unknown';
       try {
-        // eslint-disable-next-line import/no-extraneous-dependencies
+        // eslint-disable-next-line import/no-extraneous-dependencies, global-require
         const React = require('react');
         reactVersion = React.version;
       } catch (error) {
@@ -82,7 +82,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       }
 
       // Add Node version
-      const nodeVersion = process.version || '--';
+      const nodeVersion = process.version || 'unknown';
 
       // Set versions as custom attributes for both RUM and Logs
       this.setCustomAttribute('react.version', reactVersion);
