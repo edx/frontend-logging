@@ -289,20 +289,17 @@ describe('DatadogLoggingService', () => {
 
       service = new DatadogLoggingService();
 
-      // Verify React version was set (it may be 'unknown' if React is not available in test env)
       const reactVersionCalls = datadogRum.setGlobalContextProperty.mock.calls.filter(
         call => call[0] === 'react.version',
       );
       expect(reactVersionCalls.length).toBeGreaterThan(0);
 
-      // Verify Node version was set
       const nodeVersionCalls = datadogRum.setGlobalContextProperty.mock.calls.filter(
         call => call[0] === 'node.version',
       );
       expect(nodeVersionCalls.length).toBeGreaterThan(0);
       expect(nodeVersionCalls[0][1]).toBeDefined();
 
-      // Verify same for logs
       const reactVersionLogsCalls = datadogLogs.setGlobalContextProperty.mock.calls.filter(
         call => call[0] === 'react.version',
       );

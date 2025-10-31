@@ -69,26 +69,24 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
   }
 
-  addVersionMetadata() {
+  addReactVersion() {
+    let reactVersion = 'unknown';
     try {
-      // Add React version
-      let reactVersion = 'unknown';
-      try {
-        // eslint-disable-next-line import/no-extraneous-dependencies, global-require
-        const React = require('react');
-        reactVersion = React.version;
-      } catch (error) {
-        // React not available
-      }
+      // eslint-disable-next-line import/no-extraneous-dependencies, global-require
+      const React = require('react');
+      reactVersion = React.version;
+    } catch (error) {
+      sendError(error);
+    }
+    this.setCustomAttribute('react.version', reactVersion);
+  }
 
-      // Add Node version
+  addNodeVersion() {
+    try {
       const nodeVersion = process.version || 'unknown';
-
-      // Set versions as custom attributes for both RUM and Logs
-      this.setCustomAttribute('react.version', reactVersion);
       this.setCustomAttribute('node.version', nodeVersion);
     } catch (error) {
-      sendError(`Failed to add version metadata due to this error: ${error}`, {});
+      sendError(error);
     }
   }
 
@@ -135,8 +133,8 @@ class DatadogLoggingService extends NewRelicLoggingService {
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
     });
 
-    // Add version metadata for React and Node
-    this.addVersionMetadata();
+    this.addReactVersion();
+    this.addNodeVersion();
   }
 
   logInfo(infoStringOrErrorObject, customAttributes = {}) {
