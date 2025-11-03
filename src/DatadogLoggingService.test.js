@@ -293,6 +293,7 @@ describe('DatadogLoggingService', () => {
         call => call[0] === 'react.version',
       );
       expect(reactVersionCalls.length).toBeGreaterThan(0);
+      expect(reactVersionCalls[0][1]).toBeDefined();
 
       const nodeVersionCalls = datadogRum.setGlobalContextProperty.mock.calls.filter(
         call => call[0] === 'node.version',
