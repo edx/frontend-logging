@@ -69,6 +69,27 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
   }
 
+  addReactVersion() {
+    let reactVersion = 'unknown';
+    try {
+      // eslint-disable-next-line import/no-extraneous-dependencies, global-require
+      const React = require('react');
+      reactVersion = React.version;
+    } catch (error) {
+      sendError(error);
+    }
+    this.setCustomAttribute('react.version', reactVersion);
+  }
+
+  addNodeVersion() {
+    try {
+      const nodeVersion = process.version || 'unknown';
+      this.setCustomAttribute('node.version', nodeVersion);
+    } catch (error) {
+      sendError(error);
+    }
+  }
+
   initialize() {
     const requiredDatadogConfig = [
       process.env.DATADOG_APPLICATION_ID,
@@ -111,6 +132,9 @@ class DatadogLoggingService extends NewRelicLoggingService {
       forwardErrorsToLogs: true,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
     });
+
+    this.addReactVersion();
+    this.addNodeVersion();
   }
 
   logInfo(infoStringOrErrorObject, customAttributes = {}) {
