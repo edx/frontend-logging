@@ -131,7 +131,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
       ...commonInitOptions,
       forwardErrorsToLogs: true,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
-      ...this.getConnectedRUMTracesOptions(),
     });
 
     this.addReactVersion();
