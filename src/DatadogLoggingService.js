@@ -81,15 +81,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
     this.setCustomAttribute('react.version', reactVersion);
   }
 
-  addNodeVersion() {
-    try {
-      const nodeVersion = process.version || 'unknown';
-      this.setCustomAttribute('node.version', nodeVersion);
-    } catch (error) {
-      sendError(error);
-    }
-  }
-
   initialize() {
     const requiredDatadogConfig = [
       process.env.DATADOG_APPLICATION_ID,
@@ -134,7 +125,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
     });
 
     this.addReactVersion();
-    this.addNodeVersion();
   }
 
   logInfo(infoStringOrErrorObject, customAttributes = {}) {
