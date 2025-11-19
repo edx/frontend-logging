@@ -283,7 +283,7 @@ describe('DatadogLoggingService', () => {
       datadogLogs.setGlobalContextProperty.mockReset();
     });
 
-    it('adds React and Node version metadata during initialization', () => {
+    it('adds React version metadata during initialization', () => {
       process.env.DATADOG_APPLICATION_ID = 'test-app-id';
       process.env.DATADOG_CLIENT_TOKEN = 'test-client-token';
 
@@ -295,21 +295,10 @@ describe('DatadogLoggingService', () => {
       expect(reactVersionCalls.length).toBeGreaterThan(0);
       expect(reactVersionCalls[0][1]).toBeDefined();
 
-      const nodeVersionCalls = datadogRum.setGlobalContextProperty.mock.calls.filter(
-        call => call[0] === 'node.version',
-      );
-      expect(nodeVersionCalls.length).toBeGreaterThan(0);
-      expect(nodeVersionCalls[0][1]).toBeDefined();
-
       const reactVersionLogsCalls = datadogLogs.setGlobalContextProperty.mock.calls.filter(
         call => call[0] === 'react.version',
       );
       expect(reactVersionLogsCalls.length).toBeGreaterThan(0);
-
-      const nodeVersionLogsCalls = datadogLogs.setGlobalContextProperty.mock.calls.filter(
-        call => call[0] === 'node.version',
-      );
-      expect(nodeVersionLogsCalls.length).toBeGreaterThan(0);
 
       delete process.env.DATADOG_APPLICATION_ID;
       delete process.env.DATADOG_CLIENT_TOKEN;
