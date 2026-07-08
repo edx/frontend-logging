@@ -24,16 +24,21 @@ class DatadogLoggingService extends NewRelicLoggingService {
     super(options);
     const config = options ? options.config : undefined;
     this.ignoredErrorRegexes = config ? config.IGNORED_ERROR_REGEX : undefined;
+    this.beforeSend = this.beforeSend.bind(this);
     this.initialize();
     this.addRUMFeatureFlags();
   }
 
   // to read more about the use cases for beforeSend, refer to the documentation:
   // https://docs.datadoghq.com/real_user_monitoring/guide/enrich-and-control-rum-data/?tab=event#event-and-context-structure
-  // (e.g., discarding frontend errors matching the optional `IGNORED_ERROR_REGEX` configuration,
-  // currently implemented in `logError` below).
-  beforeSend() {
-    // common/shared logic across all MFEs
+  beforeSend(event) {
+    // Discard RUM error events matching IGNORED_ERROR_REGEX
+    if (event.type === 'error' && this.ignoredErrorRegexes) {
+      const errorMessage = event.error?.message || event.error?.stack || '';
+      if (errorMessage.match(this.ignoredErrorRegexes)) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -121,6 +126,15 @@ class DatadogLoggingService extends NewRelicLoggingService {
     datadogLogs.init({
       ...commonInitOptions,
       forwardErrorsToLogs: true,
+      beforeSend: (log) => {
+        if (log.status === 'error' && this.ignoredErrorRegexes) {
+          const msg = log.message || '';
+          if (msg.match(this.ignoredErrorRegexes)) {
+            return false;
+          }
+        }
+        return true;
+      },
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
     });
 
