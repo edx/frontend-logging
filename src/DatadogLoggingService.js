@@ -32,9 +32,17 @@ class DatadogLoggingService extends NewRelicLoggingService {
   // to read more about the use cases for beforeSend, refer to the documentation:
   // https://docs.datadoghq.com/real_user_monitoring/guide/enrich-and-control-rum-data/?tab=event#event-and-context-structure
   beforeSend(event) {
-    // Discard RUM error events matching IGNORED_ERROR_REGEX
     if (event.type === 'error' && this.ignoredErrorRegexes) {
       const errorMessage = event.error?.message || event.error?.stack || '';
+      const errorType = event.error?.type || '';
+
+      if (errorType) {
+        const fullErrorMessage = `${errorType}: ${errorMessage}`;
+        if (fullErrorMessage.match(this.ignoredErrorRegexes)) {
+          return false;
+        }
+      }
+
       if (errorMessage.match(this.ignoredErrorRegexes)) {
         return false;
       }
