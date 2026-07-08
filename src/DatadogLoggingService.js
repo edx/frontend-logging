@@ -130,9 +130,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       beforeSend: (log) => {
         if (log.status === 'error' && this.ignoredErrorRegexes) {
           const msg = log.message || '';
-          const errorType = log.error?.type || '';
-          const fullMsg = errorType ? `${errorType}: ${msg}` : msg;
-          if (fullMsg.match(this.ignoredErrorRegexes) || msg.match(this.ignoredErrorRegexes)) {
+          if (msg.match(this.ignoredErrorRegexes)) {
             return false;
           }
         }
