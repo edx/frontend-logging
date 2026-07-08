@@ -35,8 +35,15 @@ class DatadogLoggingService extends NewRelicLoggingService {
     if (event.type === 'error' && this.ignoredErrorRegexes) {
       const errorMessage = event.error?.message || event.error?.stack || '';
       const errorType = event.error?.type || '';
-      const fullErrorMessage = errorType ? `${errorType}: ${errorMessage}` : errorMessage;
-      if (fullErrorMessage.match(this.ignoredErrorRegexes) || errorMessage.match(this.ignoredErrorRegexes)) {
+
+      if (errorType) {
+        const fullErrorMessage = `${errorType}: ${errorMessage}`;
+        if (fullErrorMessage.match(this.ignoredErrorRegexes)) {
+          return false;
+        }
+      }
+
+      if (errorMessage.match(this.ignoredErrorRegexes)) {
         return false;
       }
     }
