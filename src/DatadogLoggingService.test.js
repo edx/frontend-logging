@@ -210,7 +210,6 @@ describe('DatadogLoggingService', () => {
   describe('beforeSend', () => {
     beforeEach(() => {
       datadogRum.init.mockReset();
-      datadogLogs.init.mockReset();
     });
 
     it('drops RUM error events matching ignored error config messages', () => {
@@ -247,24 +246,9 @@ describe('DatadogLoggingService', () => {
       }, { error })).toBe(false);
     });
 
-    it('drops browser log error events matching ignored error config messages', () => {
-      service = new DatadogLoggingService(configWithRumIgnoredErrors);
-      const logsOptions = datadogLogs.init.mock.calls[0][0];
-
-      expect(logsOptions.beforeSend({
-        status: 'error',
-        message: 'Render fallback requested by widget',
-      })).toBe(false);
-      expect(logsOptions.beforeSend({
-        status: 'error',
-        error: { message: 'Error: Monarch is not available' },
-      })).toBe(false);
-    });
-
-    it('keeps unmatched error events and non-error events', () => {
+    it('keeps unmatched RUM error events and non-error events', () => {
       service = new DatadogLoggingService(configWithRumIgnoredErrors);
       const rumOptions = datadogRum.init.mock.calls[0][0];
-      const logsOptions = datadogLogs.init.mock.calls[0][0];
 
       expect(rumOptions.beforeSend({
         type: 'error',
@@ -272,10 +256,6 @@ describe('DatadogLoggingService', () => {
       })).toBe(true);
       expect(rumOptions.beforeSend({
         type: 'view',
-        message: 'Render fallback requested by widget',
-      })).toBe(true);
-      expect(logsOptions.beforeSend({
-        status: 'info',
         message: 'Render fallback requested by widget',
       })).toBe(true);
     });

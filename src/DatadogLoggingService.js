@@ -25,7 +25,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
     const config = options ? options.config : undefined;
     this.ignoredErrorRegexes = config ? config.IGNORED_ERROR_REGEX : undefined;
     this.beforeSend = this.beforeSend.bind(this);
-    this.beforeSendLog = this.beforeSendLog.bind(this);
     this.initialize();
     this.addRUMFeatureFlags();
   }
@@ -63,18 +62,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
     }
 
     // common/shared logic across all MFEs
-    return true;
-  }
-
-  beforeSendLog(log) {
-    if (
-      log
-      && log.status === 'error'
-      && this.getBeforeSendErrorMessages(log).some(message => this.isIgnoredErrorMessage(message))
-    ) {
-      return false;
-    }
-
     return true;
   }
 
@@ -162,7 +149,6 @@ class DatadogLoggingService extends NewRelicLoggingService {
     datadogLogs.init({
       ...commonInitOptions,
       forwardErrorsToLogs: true,
-      beforeSend: this.beforeSendLog,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
     });
 
