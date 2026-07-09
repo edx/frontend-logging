@@ -25,28 +25,56 @@ class DatadogLoggingService extends NewRelicLoggingService {
     const config = options ? options.config : undefined;
     this.ignoredErrorRegexes = config ? config.IGNORED_ERROR_REGEX : undefined;
     this.beforeSend = this.beforeSend.bind(this);
+    this.beforeSendLog = this.beforeSendLog.bind(this);
     this.initialize();
     this.addRUMFeatureFlags();
   }
 
+  isIgnoredErrorMessage(errorMessage) {
+    return !!(
+      this.ignoredErrorRegexes
+      && typeof errorMessage === 'string'
+      && errorMessage.match(this.ignoredErrorRegexes)
+    );
+  }
+
+  getBeforeSendErrorMessages(event, context) {
+    const contextError = context ? context.error : undefined;
+    return [
+      event && event.error && event.error.message,
+      event && event.error && event.error.stack,
+      event && event.message,
+      contextError && contextError.message,
+      contextError && contextError.toString && contextError.toString(),
+    ].filter(message => typeof message === 'string' && message !== '');
+  }
+
   // to read more about the use cases for beforeSend, refer to the documentation:
   // https://docs.datadoghq.com/real_user_monitoring/guide/enrich-and-control-rum-data/?tab=event#event-and-context-structure
-  beforeSend(event) {
-    if (event.type === 'error' && this.ignoredErrorRegexes) {
-      const errorMessage = event.error?.message || event.error?.stack || '';
-      const errorType = event.error?.type || '';
-
-      if (errorType) {
-        const fullErrorMessage = `${errorType}: ${errorMessage}`;
-        if (fullErrorMessage.match(this.ignoredErrorRegexes)) {
-          return false;
-        }
-      }
-
-      if (errorMessage.match(this.ignoredErrorRegexes)) {
-        return false;
-      }
+  // (e.g., discarding frontend errors matching the optional `IGNORED_ERROR_REGEX` configuration,
+  // also implemented in `logError` below).
+  beforeSend(event, context) {
+    if (
+      event
+      && event.type === 'error'
+      && this.getBeforeSendErrorMessages(event, context).some(message => this.isIgnoredErrorMessage(message))
+    ) {
+      return false;
     }
+
+    // common/shared logic across all MFEs
+    return true;
+  }
+
+  beforeSendLog(log) {
+    if (
+      log
+      && log.status === 'error'
+      && this.getBeforeSendErrorMessages(log).some(message => this.isIgnoredErrorMessage(message))
+    ) {
+      return false;
+    }
+
     return true;
   }
 
@@ -134,15 +162,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
     datadogLogs.init({
       ...commonInitOptions,
       forwardErrorsToLogs: true,
-      beforeSend: (log) => {
-        if (log.status === 'error' && this.ignoredErrorRegexes) {
-          const msg = log.message || '';
-          if (msg.match(this.ignoredErrorRegexes)) {
-            return false;
-          }
-        }
-        return true;
-      },
+      beforeSend: this.beforeSendLog,
       sessionSampleRate: parseInt(process.env.DATADOG_LOGS_SESSION_SAMPLE_RATE || 0, 10),
     });
 
@@ -182,7 +202,7 @@ class DatadogLoggingService extends NewRelicLoggingService {
       Other errors are logged via error API.
     */
     const errorMessage = errorStringOrObject.message || (typeof errorStringOrObject === 'string' ? errorStringOrObject : '');
-    if (this.ignoredErrorRegexes && errorMessage.match(this.ignoredErrorRegexes)) {
+    if (this.isIgnoredErrorMessage(errorMessage)) {
       /* ignored error */
       sendBrowserLog(browserLogNameIgnoredError, errorMessage, allCustomAttributes);
     } else {

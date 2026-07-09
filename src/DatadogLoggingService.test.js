@@ -48,6 +48,11 @@ const configWithWhitespaceIgnoredErrors = {
 const configWithMissingIgnoredErrors = {
   config: {},
 };
+const configWithRumIgnoredErrors = {
+  config: {
+    IGNORED_ERROR_REGEX: /^(?:RenderFallbackSignal: )?Render fallback requested by widget$|^(?:Error: )?Monarch is not available$/,
+  },
+};
 
 describe('DatadogLoggingService', () => {
   beforeEach(() => {
@@ -199,6 +204,80 @@ describe('DatadogLoggingService', () => {
       const error = new Error('Ignore this error!');
       service.logError(error);
       expect(datadogLogs.logger.error).toHaveBeenCalledWith(error, undefined);
+    });
+  });
+
+  describe('beforeSend', () => {
+    beforeEach(() => {
+      datadogRum.init.mockReset();
+      datadogLogs.init.mockReset();
+    });
+
+    it('drops RUM error events matching ignored error config messages', () => {
+      service = new DatadogLoggingService(configWithRumIgnoredErrors);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'Render fallback requested by widget' },
+      })).toBe(false);
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'RenderFallbackSignal: Render fallback requested by widget' },
+      })).toBe(false);
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'Monarch is not available' },
+      })).toBe(false);
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'Error: Monarch is not available' },
+      })).toBe(false);
+    });
+
+    it('drops RUM error events matching ignored context error messages', () => {
+      service = new DatadogLoggingService(configWithRumIgnoredErrors);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+      const error = new Error('Render fallback requested by widget');
+      error.name = 'RenderFallbackSignal';
+
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'Unhelpful browser formatted message' },
+      }, { error })).toBe(false);
+    });
+
+    it('drops browser log error events matching ignored error config messages', () => {
+      service = new DatadogLoggingService(configWithRumIgnoredErrors);
+      const logsOptions = datadogLogs.init.mock.calls[0][0];
+
+      expect(logsOptions.beforeSend({
+        status: 'error',
+        message: 'Render fallback requested by widget',
+      })).toBe(false);
+      expect(logsOptions.beforeSend({
+        status: 'error',
+        error: { message: 'Error: Monarch is not available' },
+      })).toBe(false);
+    });
+
+    it('keeps unmatched error events and non-error events', () => {
+      service = new DatadogLoggingService(configWithRumIgnoredErrors);
+      const rumOptions = datadogRum.init.mock.calls[0][0];
+      const logsOptions = datadogLogs.init.mock.calls[0][0];
+
+      expect(rumOptions.beforeSend({
+        type: 'error',
+        error: { message: 'Unexpected application failure' },
+      })).toBe(true);
+      expect(rumOptions.beforeSend({
+        type: 'view',
+        message: 'Render fallback requested by widget',
+      })).toBe(true);
+      expect(logsOptions.beforeSend({
+        status: 'info',
+        message: 'Render fallback requested by widget',
+      })).toBe(true);
     });
   });
 
